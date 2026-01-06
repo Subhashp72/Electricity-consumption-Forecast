@@ -118,7 +118,8 @@ This ensures:
 * Faster training
 * Better generalization
 
-FINAL_FEATURES = [
+FINAL_FEATURES 
+
     # ---- Calendar / seasonality ----
     "month",
     "dow",
@@ -144,7 +145,6 @@ FINAL_FEATURES = [
     "lag_mean_365d",
     "lag_std_365d",
     "lag_p10_365d",
-]
 
 ---
 
@@ -262,12 +262,16 @@ Metrics are computed separately for **train and test** datasets:
 
 ## 10. Model Performance Summary
 
-| Model             | Split | R²         | WAPE       |
-| ----------------- | ----- | ---------- | ---------- |
-| Linear Regression | Test  | ❌ Negative | ❌ Unstable |
-| Random Forest     | Test  | ~0.88      | ~13%       |
-| Gradient Boosting | Test  | ~0.88      | ~16%       |
-| XGBoost           | Test  | ~0.85      | ~16%       |
+| Model                       | Split |    R² |     MAE |    WAPE |
+| --------------------------- | ----- | ----: | ------: | ------: |
+| Linear Regression (OLS)     | Train | -5.73 | 1.68e30 | 5.13e13 |
+| Linear Regression (OLS)     | Test  | -7.65 | 8.17e28 | 2.49e12 |
+| Random Forest               | Train | 0.966 | 3.47e15 |   0.106 |
+| Random Forest               | Test  | 0.872 | 4.38e15 |   0.134 |
+| Gradient Boosting (sklearn) | Train | 0.980 | 3.80e15 |   0.116 |
+| Gradient Boosting (sklearn) | Test  | 0.876 | 5.28e15 |   0.161 |
+| XGBoost                     | Train | 0.978 | 3.05e15 |   0.093 |
+| XGBoost                     | Test  | 0.853 | 4.85e15 |   0.148 |
 
 ---
 
@@ -283,18 +287,6 @@ Metrics are computed separately for **train and test** datasets:
 
 ## 12. Model Performance
 
-| Model                       | Split |    R² |     MAE |    WAPE |
-| --------------------------- | ----- | ----: | ------: | ------: |
-| Linear Regression (OLS)     | Train | -5.73 | 1.68e30 | 5.13e13 |
-| Linear Regression (OLS)     | Test  | -7.65 | 8.17e28 | 2.49e12 |
-| Random Forest               | Train | 0.966 | 3.47e15 |   0.106 |
-| Random Forest               | Test  | 0.872 | 4.38e15 |   0.134 |
-| Gradient Boosting (sklearn) | Train | 0.980 | 3.80e15 |   0.116 |
-| Gradient Boosting (sklearn) | Test  | 0.876 | 5.28e15 |   0.161 |
-| XGBoost                     | Train | 0.978 | 3.05e15 |   0.093 |
-| XGBoost                     | Test  | 0.853 | 4.85e15 |   0.148 |
-
-
 **Gradient Boosting (sklearn GBM)** is selected as the final model due to:
 
 * Strong generalization performance
@@ -302,7 +294,12 @@ Metrics are computed separately for **train and test** datasets:
 * Better representation of daily forecast compared to random forest
 * Suitability for production deployment
 
+### Actual vs Predicted (test)
 ![alt text](image-1.png)
+**Nov Forecast explanation:**
+
+The November forecast deviation is caused by short-term lag features (7–30 days) being temporarily distorted by anomalous variability in late October and early November. Since these features are month-anchored, the effect propagates across the entire month, causing a level shift in predictions. Weekly forecasting would smooth such short-lived anomalies and produce more stable and robust forecasts during transition periods like November.
+
 ---
 
 ## 13. Feature Importance
@@ -332,22 +329,11 @@ Lag-based (7 day average demand and 30 day average demand) and seasonality featu
 ├── README.md
 ```
 
----
-
-## 15. Limitations & Future Work
-
-* Add prediction intervals (quantile regression or bootstrapping)
-* Perform meter-level residual diagnostics
-* Explore ensembling (RF + GBM)
-* Extend to aggregate load forecasting
-* Hyperparameter optimization
-
----
-
-## 16. Conclusion
+## 15. Conclusion
 
 This project demonstrates a **robust, scalable, and leakage-safe approach** to electricity consumption forecasting.
 By leveraging global machine-learning models with carefully engineered features, the solution balances **accuracy, interpretability, and production readiness**.
 
 ---
+
 
